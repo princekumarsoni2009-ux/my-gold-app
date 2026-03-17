@@ -3,237 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoldBill Pro | Prince Soni</title>
-    <!-- Manifest for PWA -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkdvbGRCaWxsIFBybyIsCiAgInNob3J0X25hbWUiOiAiR29sZEJpbGwiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTcyYSIsCiAgInRoZW1lX2NvbG9yIjogIiNmYmJmMjQiCn0=">
-    
+    <title>GoldBill Pro</title>
+    <link rel="manifest" href="manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.16.4/framer-motion.umd.min.js"></script>
-    
     <style>
         .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .gold-gradient { background: linear-gradient(135deg, #fbbf24, #d97706); }
-        body { background: #0f172a; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .tab-content { display: none; animation: fadeIn 0.5s ease; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body { background: #0f172a; color: white; font-family: sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body class="pb-24">
 
-    <!-- Navbar -->
-    <header class="p-6 flex justify-between items-center">
-        <div>
-            <h1 class="text-2xl font-black text-yellow-500 tracking-tighter">GOLDBILL <span class="text-white">PRO</span></h1>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Premium Jewellery Management</p>
-        </div>
-        <div id="premiumBadge" class="px-3 py-1 bg-yellow-500/20 border border-yellow-500/50 rounded-full text-[10px] text-yellow-500 font-bold">FREE PLAN</div>
-    </header>
-
-    <!-- SECTION 1: LIVE RATE -->
-    <div id="home" class="tab-content active p-4">
-        <div class="glass p-6 rounded-[2rem] relative overflow-hidden mb-6">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
-            <div class="flex justify-between items-center mb-4">
-                <span class="text-sm text-gray-400">Live Market • 24K Gold</span>
-                <span class="text-green-400 text-xs font-bold">▲ +₹420 (0.8%)</span>
-            </div>
-            <h3 class="text-5xl font-black mb-2">₹7,240 <span class="text-lg font-normal text-gray-400">/1g</span></h3>
-            <p class="text-gray-400 text-sm">Last update: Just now</p>
-            <button class="mt-4 w-full py-2 bg-white/5 rounded-xl text-xs font-medium border border-white/10">Refresh Rates</button>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-            <div class="glass p-4 rounded-3xl">
-                <p class="text-gray-500 text-xs">Silver (1kg)</p>
-                <h4 class="text-xl font-bold">₹92,500</h4>
-            </div>
-            <div class="glass p-4 rounded-3xl">
-                <p class="text-gray-500 text-xs">Gold (10g)</p>
-                <h4 class="text-xl font-bold">₹72,400</h4>
-            </div>
+    <!-- Auth Section -->
+    <div id="auth-section" class="p-6 pt-20 text-center">
+        <div class="glass p-8 rounded-[2rem]">
+            <h1 class="text-3xl font-black text-yellow-500 mb-6">GOLDBILL PRO</h1>
+            <input id="email" type="email" placeholder="Email" class="w-full p-4 glass rounded-2xl mb-4 outline-none">
+            <input id="pass" type="password" placeholder="Password" class="w-full p-4 glass rounded-2xl mb-6 outline-none">
+            <button id="loginBtn" class="w-full bg-yellow-500 text-black font-bold py-4 rounded-2xl active:scale-95 transition">Login / Signup</button>
+            <p class="mt-4 text-xs text-gray-500 italic">*Naya user hai toh automatic account ban jayega</p>
         </div>
     </div>
 
-    <!-- SECTION 2: BILL GENERATOR -->
-    <div id="bills" class="tab-content p-4">
-        <div class="glass p-6 rounded-[2rem]">
-            <h2 class="text-xl font-bold mb-4">New Invoice</h2>
-            <div class="space-y-4">
-                <input id="custName" type="text" placeholder="Customer Name" class="w-full p-4 glass rounded-2xl outline-none focus:border-yellow-500">
-                <div class="grid grid-cols-2 gap-4">
-                    <input id="weight" type="number" placeholder="Weight (g)" class="w-full p-4 glass rounded-2xl outline-none">
-                    <input id="rate" type="number" placeholder="Rate/g" class="w-full p-4 glass rounded-2xl outline-none">
+    <!-- Main App Section (Initially Hidden) -->
+    <div id="app-section" class="hidden">
+        <header class="p-6 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-yellow-500 tracking-tighter">GOLDBILL PRO</h2>
+            <button id="logoutBtn" class="text-xs text-red-400 bg-red-500/10 px-3 py-1 rounded-lg">Logout</button>
+        </header>
+
+        <!-- Home: Live Rate -->
+        <div id="home" class="tab-content active p-4 text-center">
+            <div class="glass p-10 rounded-[2.5rem] mb-6 relative overflow-hidden">
+                <p class="text-gray-400 text-sm mb-2">Live Gold Rate (24K/1g)</p>
+                <h3 id="goldPrice" class="text-6xl font-black text-white">₹7,240</h3>
+                <div class="mt-4 text-green-400 font-bold">▲ Market Up</div>
+                <button id="refreshBtn" class="mt-6 text-xs bg-white/10 px-4 py-2 rounded-full">Refresh Price</button>
+            </div>
+        </div>
+
+        <!-- Bill Generator -->
+        <div id="bills" class="tab-content p-4">
+            <div class="glass p-6 rounded-[2rem]">
+                <h2 class="text-xl font-bold mb-4">Create Bill</h2>
+                <div class="space-y-4">
+                    <input id="cName" type="text" placeholder="Customer Name" class="w-full p-4 glass rounded-2xl outline-none">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input id="cWeight" type="number" placeholder="Weight (g)" class="w-full p-4 glass rounded-2xl outline-none">
+                        <input id="cRate" type="number" placeholder="Rate per g" class="w-full p-4 glass rounded-2xl outline-none">
+                    </div>
+                    <div class="p-6 bg-yellow-500/10 rounded-2xl">
+                        <p class="text-xs text-yellow-500 font-bold uppercase">Total Amount</p>
+                        <h4 id="totalVal" class="text-3xl font-black">₹0</h4>
+                    </div>
+                    <button id="pdfBtn" class="w-full bg-yellow-500 text-black font-black py-4 rounded-2xl shadow-lg">DOWNLOAD BILL</button>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <input id="making" type="number" placeholder="Making Charge" class="w-full p-4 glass rounded-2xl outline-none">
-                    <input id="gst" type="number" value="3" placeholder="GST %" class="w-full p-4 glass rounded-2xl outline-none">
-                </div>
-                
-                <div class="p-6 bg-yellow-500/10 rounded-[2rem] border border-yellow-500/20">
-                    <p class="text-xs text-yellow-500 font-bold uppercase mb-1">Total Bill Amount</p>
-                    <h3 id="totalDisplay" class="text-4xl font-black text-white">₹0.00</h3>
-                </div>
-
-                <button onclick="saveAndDownloadBill()" class="w-full gold-gradient text-black font-black py-5 rounded-2xl shadow-xl shadow-yellow-500/20 active:scale-95 transition-all">GENERATE & DOWNLOAD PDF</button>
             </div>
         </div>
     </div>
 
-    <!-- SECTION 3: REFER & EARN -->
-    <div id="refer" class="tab-content p-4">
-        <div class="glass p-8 rounded-[2rem] text-center">
-            <div class="w-20 h-20 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span class="text-3xl">🎁</span>
-            </div>
-            <h2 class="text-2xl font-bold mb-2">Invite & Earn</h2>
-            <p class="text-gray-400 text-sm mb-6">Share your code and get 1 month of Premium for every 5 referrals.</p>
-            
-            <div class="bg-white/5 border border-dashed border-white/20 p-4 rounded-2xl mb-6">
-                <p class="text-xs text-gray-500 mb-1">Your Referral Code</p>
-                <h4 class="text-xl font-mono font-bold text-yellow-500">PRINCE500</h4>
-            </div>
-            
-            <button onclick="shareApp()" class="w-full py-4 bg-white text-black font-bold rounded-2xl">SHARE ON WHATSAPP</button>
-        </div>
-    </div>
-
-    <!-- SECTION 4: PROFILE -->
-    <div id="profile" class="tab-content p-4">
-        <div class="flex items-center gap-4 mb-8 p-2">
-            <div class="w-16 h-16 rounded-full gold-gradient p-1">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Prince" class="bg-slate-800 rounded-full">
-            </div>
-            <div>
-                <h2 class="text-xl font-bold">Prince Soni</h2>
-                <p class="text-gray-500 text-sm">Soni Jewellers</p>
-            </div>
-        </div>
-
-        <div class="space-y-3">
-            <div onclick="alert('Subscription: ₹19/month Plan Active soon!')" class="glass p-5 rounded-2xl flex justify-between items-center">
-                <span>Go Premium</span>
-                <span class="text-yellow-500">₹19/mo ➔</span>
-            </div>
-            <div class="glass p-5 rounded-2xl flex justify-between items-center opacity-50">
-                <span>Bill History</span>
-                <span>🔒</span>
-            </div>
-            <div class="glass p-5 rounded-2xl flex justify-between items-center text-red-400">
-                <span>Logout</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation -->
-    <nav class="fixed bottom-6 left-6 right-6 h-20 glass rounded-[2.5rem] flex justify-around items-center px-4 z-50">
-        <button onclick="showTab('home')" class="nav-btn text-yellow-500 flex flex-col items-center">
-            <span class="text-xl">🏠</span>
-            <span class="text-[10px] mt-1 font-bold">Home</span>
-        </button>
-        <button onclick="showTab('bills')" class="nav-btn text-gray-500 flex flex-col items-center">
-            <span class="text-xl">📄</span>
-            <span class="text-[10px] mt-1 font-bold">Bills</span>
-        </button>
-        <button onclick="showTab('refer')" class="nav-btn text-gray-500 flex flex-col items-center">
-            <span class="text-xl">🎁</span>
-            <span class="text-[10px] mt-1 font-bold">Refer</span>
-        </button>
-        <button onclick="showTab('profile')" class="nav-btn text-gray-500 flex flex-col items-center">
-            <span class="text-xl">👤</span>
-            <span class="text-[10px] mt-1 font-bold">Profile</span>
-        </button>
+    <!-- Navigation -->
+    <nav id="navbar" class="hidden fixed bottom-6 left-6 right-6 h-18 glass rounded-full flex justify-around items-center px-6 z-50">
+        <button onclick="changeTab('home')" class="text-2xl">🏠</button>
+        <button onclick="changeTab('bills')" class="text-2xl text-gray-500">📄</button>
     </nav>
 
-    <!-- Firebase SDKs -->
+    <!-- FIREBASE & LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // AAPKA FIREBASE CONFIG
+        // AAPKA CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyD07v6qefZ8GtvUiTrsaQCmfzqmbTUly-I",
             authDomain: "manishtechjewells-87b42.firebaseapp.com",
             projectId: "manishtechjewells-87b42",
             storageBucket: "manishtechjewells-87b42.firebasestorage.app",
             messagingSenderId: "713754712214",
-            appId: "1:713754712214:web:4d968b9ce9b864d2ad4ab7",
-            measurementId: "G-X9CZJ3WQ1S"
+            appId: "1:713754712214:web:4d968b9ce9b864d2ad4ab7"
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        // Global functions for buttons
-        window.saveAndDownloadBill = async () => {
-            const name = document.getElementById('custName').value;
-            const weight = parseFloat(document.getElementById('weight').value);
-            const rate = parseFloat(document.getElementById('rate').value);
-            const making = parseFloat(document.getElementById('making').value) || 0;
-            const gstPercent = parseFloat(document.getElementById('gst').value) || 3;
+        // UI Variables
+        const authSection = document.getElementById('auth-section');
+        const appSection = document.getElementById('app-section');
+        const navbar = document.getElementById('navbar');
 
-            if(!name || !weight || !rate) return alert("Please fill all details!");
+        // Login Function
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            if(!email || !pass) return alert("Email/Password daalein");
 
-            const subtotal = (weight * rate) + making;
-            const total = subtotal + (subtotal * gstPercent / 100);
-
-            // 1. Save to Firebase
             try {
-                await addDoc(collection(db, "bills"), {
-                    customerName: name,
-                    totalAmount: total,
-                    date: new Date().toISOString()
-                });
-                console.log("Saved to Firebase!");
-            } catch (e) { console.error("Firebase Error", e); }
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (error) {
+                try {
+                    await createUserWithEmailAndPassword(auth, email, pass);
+                } catch (e) { alert("Error: " + e.message); }
+            }
+        });
 
-            // 2. Generate PDF
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.setFontSize(20);
-            doc.text("MANISH TECH JEWELLS", 20, 20);
-            doc.setFontSize(12);
-            doc.text(`Customer: ${name}`, 20, 40);
-            doc.text(`Weight: ${weight}g | Rate: ${rate}/g`, 20, 50);
-            doc.text(`Making Charges: ${making}`, 20, 60);
-            doc.text(`GST: ${gstPercent}%`, 20, 70);
-            doc.text(`Total Amount: Rs. ${total.toFixed(2)}`, 20, 90);
-            doc.save(`Bill_${name}.pdf`);
-            alert("Bill Generated & Saved!");
-        };
-    </script>
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
 
-    <script>
-        // Tab Navigation Logic
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.replace('text-yellow-500', 'text-gray-500'));
-            event.currentTarget.classList.replace('text-gray-500', 'text-yellow-500');
-        }
+        // Auth Listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                authSection.classList.add('hidden');
+                appSection.classList.remove('hidden');
+                navbar.classList.remove('hidden');
+            } else {
+                authSection.classList.remove('hidden');
+                appSection.classList.add('hidden');
+                navbar.classList.add('hidden');
+            }
+        });
 
         // Live Calculation
         document.addEventListener('input', () => {
-            const weight = parseFloat(document.getElementById('weight').value) || 0;
-            const rate = parseFloat(document.getElementById('rate').value) || 0;
-            const making = parseFloat(document.getElementById('making').value) || 0;
-            const gst = parseFloat(document.getElementById('gst').value) || 3;
-            
-            const subtotal = (weight * rate) + making;
-            const total = subtotal + (subtotal * gst / 100);
-            document.getElementById('totalDisplay').innerText = "₹" + total.toLocaleString('en-IN');
+            const w = document.getElementById('cWeight').value || 0;
+            const r = document.getElementById('cRate').value || 0;
+            document.getElementById('totalVal').innerText = "₹" + (w * r).toLocaleString();
         });
 
-        function shareApp() {
-            const text = "Try GoldBill Pro App for Live Rates & Invoicing! Use my code: PRINCE500";
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
-        }
+        // PDF Download
+        document.getElementById('pdfBtn').addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const name = document.getElementById('cName').value || "Customer";
+            doc.setFontSize(22);
+            doc.text("GOLDBILL PRO INVOICE", 20, 20);
+            doc.setFontSize(14);
+            doc.text("Customer: " + name, 20, 40);
+            doc.text("Total: " + document.getElementById('totalVal').innerText, 20, 60);
+            doc.save("Bill.pdf");
+        });
 
-        // Service Worker for PWA
+        // Refresh Price Simulator
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            const newRate = 7000 + Math.floor(Math.random() * 500);
+            document.getElementById('goldPrice').innerText = "₹" + newRate;
+        });
+
+        // Tab Switcher
+        window.changeTab = (tabId) => {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        };
+
+        // Service Worker for Install
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
+            navigator.serviceWorker.register('sw.js');
         }
     </script>
 </body>
